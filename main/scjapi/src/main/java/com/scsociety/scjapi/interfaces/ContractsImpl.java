@@ -1,33 +1,31 @@
 package com.scsociety.scjapi.interfaces;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
-import com.scsociety.scjapi.models.Contract;
-
-public class ContractsImpl<CONTRACT> implements IContracts<CONTRACT> 
-{
+public class ContractsImpl<CONTRACT> implements IContracts<CONTRACT> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5678342168357808503L;
 	private final IBackend backend;
+
 	Class<CONTRACT> reference;
-	public ContractsImpl(Properties config,Class<CONTRACT> cr) 
-	{
+	private List<CONTRACT> contract_list;
+
+	public ContractsImpl(Properties config, Class<CONTRACT> cr) {
 		backend = PostgreSQLBackend.getInstance(config);
-		System.out.println(backend);
 		reference = cr;
-		System.out.println(PostgreSQLBackend.getInstance(config));
+		contract_list = new ArrayList<CONTRACT>();
 	}
-	private CONTRACT getContractInstance()
-	{
+
+	private CONTRACT getContractInstance() {
 		try {
 			return reference.newInstance();
 		} catch (InstantiationException e) {
@@ -39,19 +37,18 @@ public class ContractsImpl<CONTRACT> implements IContracts<CONTRACT>
 		}
 		return null;
 	}
-	public List<CONTRACT> getAllContracts() 
-	{
-		PreparedStatement z = backend.getContractQuery();
-		List<CONTRACT> a = new ArrayList<CONTRACT>();
 
+	public List<CONTRACT> getAllContracts() {
+		contract_list = new ArrayList<CONTRACT>();
+		PreparedStatement pQuery = backend.getContractsQuery();
 		try {
-			z.setString(1, "472a8aa2-68ab-4034-9098-336c9bdc140c");
-			ResultSet r = backend.query(z);
-			while (r.next())
-			{
+			ResultSet r = backend.query(pQuery);
+			while (r.next()) {
 				CONTRACT c = this.getContractInstance();
-				Method method = c.getClass().getMethod("parse", ResultSet.class);
+				Method method = c.getClass()
+						.getMethod("parse", ResultSet.class);
 				method.invoke(c, r);
+				contract_list.add(c);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -72,13 +69,72 @@ public class ContractsImpl<CONTRACT> implements IContracts<CONTRACT>
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return a;
+		return contract_list;
 	}
 
-	public Contract getContractByExchangeId(String exchangeId) 
-	{
-		// TODO Auto-generated method stub
+	public CONTRACT getContractByExchangeId(String exchangeId) {
+		PreparedStatement pQuery = backend.getContractByEidQuery();
+		try {
+			pQuery.setString(1, exchangeId);
+			ResultSet r = backend.query(pQuery);
+
+			CONTRACT c = this.getContractInstance();
+			Method method = c.getClass().getMethod("parse", ResultSet.class);
+			method.invoke(c, r);
+			return c;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public CONTRACT getContractById(String id) {
+		PreparedStatement pQuery = backend.getContractByIdQuery();
+		try {
+			pQuery.setString(1, id);
+			ResultSet r = backend.query(pQuery);
+
+			CONTRACT c = this.getContractInstance();
+			Method method = c.getClass().getMethod("parse", ResultSet.class);
+			method.invoke(c, r);
+			return c;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return null;
 	}
 

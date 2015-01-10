@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import com.scsociety.scjapi.interfaces.IBackend;
 import com.scsociety.scjapi.misc.SQLQueries;
 
 public class PostgreSQLBackend implements IBackend {
@@ -78,9 +77,27 @@ public class PostgreSQLBackend implements IBackend {
 		return false;
 	}
 
-	public PreparedStatement getContractQuery() {
+	public PreparedStatement getContractsQuery() {
 		try {
-			return connection.prepareStatement(SQLQueries.ONE_CONTRACT);
+			return connection.prepareStatement(SQLQueries.ALL_CONTRACTS);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	public PreparedStatement getContractByIdQuery() {
+		try {
+			return connection.prepareStatement(SQLQueries.CONTRACT_BY_UUID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	public PreparedStatement getContractByEidQuery() {
+		try {
+			return connection.prepareStatement(SQLQueries.CONTRACT_BY_EXCHANGE_ID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -88,13 +105,33 @@ public class PostgreSQLBackend implements IBackend {
 
 	}
 
-	public PreparedStatement getTradesQuery() {
+	public PreparedStatement getTradesQuery() 
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public PreparedStatement getAccountsQuery() {
+	public PreparedStatement getAccountsQuery()
+	{
 		// TODO Auto-generated method stub
+		return null;
+	}
+	public PreparedStatement getInsertTradeQuery() 
+	{
+		try {
+			return connection.prepareStatement(SQLQueries.INSERT_TRADE);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public PreparedStatement getDeleteTradeQuery() 
+	{
+		try {
+			return connection.prepareStatement(SQLQueries.DELETE_TRADE);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -107,6 +144,14 @@ public class PostgreSQLBackend implements IBackend {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	public void commit()
+	{
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

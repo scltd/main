@@ -11,8 +11,13 @@ public interface IBackend extends Serializable
 	public Boolean ping();
 	public Boolean intialize(Properties config);
 	public Boolean disconnect();
-	public PreparedStatement getContractQuery();
+	public void commit();
+	public PreparedStatement getContractsQuery();
+	public PreparedStatement getContractByIdQuery();
+	public PreparedStatement getContractByEidQuery();
 	public PreparedStatement getTradesQuery();
 	public PreparedStatement getAccountsQuery();
+	public PreparedStatement getInsertTradeQuery();
+	public PreparedStatement getDeleteTradeQuery();
 	public ResultSet query(PreparedStatement p);	
 }
