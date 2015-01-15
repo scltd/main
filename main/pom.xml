@@ -8,5 +8,6 @@
   <modules>
   	<module>models</module>
   	<module>scjapi</module>
+  	<module>ibtcs</module>
   </modules>
 </project>
