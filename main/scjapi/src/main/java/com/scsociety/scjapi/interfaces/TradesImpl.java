@@ -30,7 +30,8 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 	}
 
 	public boolean insertTrade(String account, String contract, String trader,
-			Integer size, Double price, String desc, Integer type) {
+			Integer size, Double price, String desc, Integer type,
+			boolean commit) {
 		PreparedStatement prepQuery = backend.getInsertTradeQuery();
 
 		try {
@@ -42,7 +43,8 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 			prepQuery.setString(6, desc);
 			prepQuery.setInt(7, type);
 			prepQuery.execute();
-			backend.commit();
+			if (commit)
+				backend.commit();
 			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -56,10 +58,10 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 			Integer tradeno) {
 		// TODO Auto-generated method stub
 		return false;
+
 	}
 
-	public boolean deleteTrade(Integer tradeNo) 
-	{
+	public boolean deleteTrade(Integer tradeNo) {
 		PreparedStatement prepQuery = backend.getDeleteTradeQuery();
 
 		try {
@@ -71,6 +73,11 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public void rollback() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

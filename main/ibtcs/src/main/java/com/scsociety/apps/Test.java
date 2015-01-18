@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ib.client.AnyWrapper;
 import com.ib.client.EClientSocket;
+import com.ib.client.ExecutionFilter;
 
 public class Test {
 
@@ -38,6 +39,8 @@ public class Test {
 		AnyWrapper z = new IBInterface(p);
 		EClientSocket e = new EClientSocket(z);
 		e.eConnect("localhost", 4001, 10);
+		e.reqAccountSummary(1,"All","NetLiquidation");
+		e.reqExecutions(2, new ExecutionFilter());
 	}
 
 }

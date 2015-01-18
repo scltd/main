@@ -1,5 +1,7 @@
 package com.scsociety.apps;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -22,7 +24,6 @@ import com.scsociety.scjapi.models.TradeModel;
 public class IBInterface implements EWrapper {
 	private ITrades<TradeModel> tradesInterface;
 	private IContracts<com.scsociety.scjapi.models.Contract> contractsInterface;
-	
 	final static Logger log = LoggerFactory.getLogger(IBInterface.class);
 
 	public IBInterface(Properties config) {
@@ -73,8 +74,8 @@ public class IBInterface implements EWrapper {
 	}
 
 	public void tickString(int tickerId, int tickType, String value) {
-		log.info("tickString: tickerId: {}, tickType: {}, value: {}",
-				tickerId, tickType, value);
+		log.info("tickString: tickerId: {}, tickType: {}, value: {}", tickerId,
+				tickType, value);
 
 	}
 
@@ -89,14 +90,16 @@ public class IBInterface implements EWrapper {
 	public void orderStatus(int orderId, String status, int filled,
 			int remaining, double avgFillPrice, int permId, int parentId,
 			double lastFillPrice, int clientId, String whyHeld) {
-		log.info("orderStatus: orderId: {}, status: {}, filled: {}, clientId:{}",
-				orderId,status,filled,clientId);
+		log.info(
+				"orderStatus: orderId: {}, status: {}, filled: {}, clientId:{}",
+				orderId, status, filled, clientId);
 	}
 
 	public void openOrder(int orderId, Contract contract, Order order,
 			OrderState orderState) {
-		log.info("orderStatus: orderId: {}, m_conId: {}, m_action: {}, orderState:{}",
-				orderId,contract.m_conId,order.m_action,orderState);
+		log.info(
+				"orderStatus: orderId: {}, m_conId: {}, m_action: {}, orderState:{}",
+				orderId, contract.m_conId, order.m_action, orderState);
 
 	}
 
@@ -107,7 +110,9 @@ public class IBInterface implements EWrapper {
 
 	public void updateAccountValue(String key, String value, String currency,
 			String accountName) {
-		log.info("updateAccountValue: {}, value:{}, currency:{},accountName:{}",key,value,currency,accountName);
+		log.info(
+				"updateAccountValue: {}, value:{}, currency:{},accountName:{}",
+				key, value, currency, accountName);
 	}
 
 	public void updatePortfolio(Contract contract, int position,
@@ -148,7 +153,16 @@ public class IBInterface implements EWrapper {
 	}
 
 	public void execDetails(int reqId, Contract contract, Execution execution) {
-		log.info("execDetails");
+		if (execution.m_side.equals("SLD"))
+		{
+			execution.m_cumQty *= -1;
+		}
+		log.trace("execDetails [{}],{} - {}@{} {}[{}]", reqId,
+				contract.m_localSymbol, execution.m_cumQty, execution.m_price,
+				execution.m_clientId,execution.m_execId);
+		com.scsociety.scjapi.models.Contract c = contractsInterface.getContractById(new Integer(contract.m_conId).toString());
+		tradesInterface.insertTrade("SCLPER",c.getUuid(),  "SCSTRD01", execution.m_cumQty , execution.m_price, "Manualy executed", 0,false);
+//		tradesInterface.updatePosition()
 	}
 
 	public void execDetailsEnd(int reqId) {
@@ -170,11 +184,10 @@ public class IBInterface implements EWrapper {
 			String origExchange) {
 		log.info("updateNewsBulletin");
 
-
 	}
 
 	public void managedAccounts(String accountsList) {
-		log.info("managedAccounts");
+		log.info("managedAccounts {} ", accountsList);
 
 	}
 
@@ -253,12 +266,13 @@ public class IBInterface implements EWrapper {
 
 	public void accountSummary(int reqId, String account, String tag,
 			String value, String currency) {
-		log.info("accountSummary");
+		log.trace("accountSummary: {}, {}, {}, {} {}", reqId, account, tag,
+				value, currency);
 
 	}
 
 	public void accountSummaryEnd(int reqId) {
-		log.info("accountSummaryEnd");
+		log.info("accountSummaryEnd: {}", reqId);
 	}
 
 	public void verifyMessageAPI(String apiData) {
@@ -270,7 +284,7 @@ public class IBInterface implements EWrapper {
 	}
 
 	public void displayGroupList(int reqId, String groups) {
-		log.info("displayGroupList");	
+		log.info("displayGroupList");
 
 	}
 

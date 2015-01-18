@@ -38,7 +38,7 @@ public class Test {
 			System.out.println(ccc.getExpiration());
 		}
 		ITrades<TradeModel> it = new TradesImpl<TradeModel>(p, TradeModel.class);
-		it.insertTrade("PPP", "90001a59-dd5f-48b7-a994-5d0b6e8af723", "SCSTRD01", 10, 1.12, "DDDE", 1);
+		it.insertTrade("PPP", "90001a59-dd5f-48b7-a994-5d0b6e8af723", "SCSTRD01", 10, 1.12, "DDDE", 1,true);
 		it.deleteTrade(10);
 	}
 

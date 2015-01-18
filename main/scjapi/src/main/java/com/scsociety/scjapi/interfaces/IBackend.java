@@ -17,6 +17,8 @@ public interface IBackend extends Serializable
 	public PreparedStatement getContractByEidQuery();
 	public PreparedStatement getTradesQuery();
 	public PreparedStatement getAccountsQuery();
+	public PreparedStatement getAccountByIdQuery();
+	public PreparedStatement getAccountByNameQuery();
 	public PreparedStatement getInsertTradeQuery();
 	public PreparedStatement getDeleteTradeQuery();
 	public ResultSet query(PreparedStatement p);	

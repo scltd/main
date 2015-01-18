@@ -154,4 +154,24 @@ public class PostgreSQLBackend implements IBackend {
 		}
 	}
 
+	public PreparedStatement getAccountByIdQuery() 
+	{
+		try {
+			return connection.prepareStatement(SQLQueries.ACCOUNT_BY_UUID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public PreparedStatement getAccountByNameQuery() 
+	{
+		try {
+			return connection.prepareStatement(SQLQueries.ACCOUNT_BY_NAME);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }
