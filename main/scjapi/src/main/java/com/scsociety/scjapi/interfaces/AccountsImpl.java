@@ -30,125 +30,123 @@ public class AccountsImpl<ACCOUNT> implements IAccounts<ACCOUNT> {
 		try {
 			return reference.newInstance();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public ACCOUNT loadAccountById(String uuid) {
+	public List<ACCOUNT> loadAccountById(String uuid) {
 		PreparedStatement pQuery = backend.getAccountByIdQuery();
+		List<ACCOUNT> return_list = new ArrayList<ACCOUNT>();
+
 		try {
 			pQuery.setString(1, uuid);
 			ResultSet r = backend.query(pQuery);
+			while (r.next()) {
 
-			ACCOUNT c = this.getAccountInstance();
-			Method method = c.getClass().getMethod("parse", ResultSet.class);
-			method.invoke(c, r);
-			return c;
+				ACCOUNT c = this.getAccountInstance();
+				Method method = c.getClass()
+						.getMethod("parse", ResultSet.class);
+				method.invoke(c, r);
+				return_list.add(c);
+			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return return_list;
 	}
 
-	public ACCOUNT loadAccountByName(String name) {
+	public List<ACCOUNT> loadAccountByName(String name) {
 		PreparedStatement pQuery = backend.getAccountByNameQuery();
+		List<ACCOUNT> return_list = new ArrayList<ACCOUNT>();
+
 		try {
 			pQuery.setString(1, name);
 			ResultSet r = backend.query(pQuery);
+			while (r.next()) {
 
-			ACCOUNT c = this.getAccountInstance();
-			Method method = c.getClass().getMethod("parse", ResultSet.class);
-			method.invoke(c, r);
-			return c;
-
+				ACCOUNT c = this.getAccountInstance();
+				Method method = c.getClass()
+						.getMethod("parse", ResultSet.class);
+				method.invoke(c, r);
+				return_list.add(c);
+			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return return_list;
 	}
 
 	public List<ACCOUNT> getAllAccounts() {
 		PreparedStatement pQuery = backend.getAccountsQuery();
+		account_list = new ArrayList<ACCOUNT>();
 		try {
 			ResultSet r = backend.query(pQuery);
-			List<ACCOUNT> rv = new ArrayList<ACCOUNT>();
-			while (r.next())
-			{
-			ACCOUNT c = this.getAccountInstance();
-			Method method = c.getClass().getMethod("parse", ResultSet.class);
-			method.invoke(c, r);
-			rv.add(c);
+			while (r.next()) {
+				ACCOUNT c = this.getAccountInstance();
+				Method method = c.getClass()
+						.getMethod("parse", ResultSet.class);
+				method.invoke(c, r);
+				account_list.add(c);
 			}
-			return rv;
-
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return account_list;
 	}
 
-	public boolean updateAccount(ACCOUNT account) {
-		// TODO Auto-generated method stub
+	public boolean updateAccount(String uuid, Integer today, Double equity) {
+		PreparedStatement pQuery = backend.getUpdateAccountQuery();
+		try {
+			pQuery.setInt(1, today);
+			pQuery.setDouble(2, equity);
+			pQuery.setString(3, uuid);
+			pQuery.execute();
+			backend.commit();
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
 		return false;
 	}
 
 	public void rollback() {
-		// TODO Auto-generated method stub
-
+		backend.rollback();
 	}
 
 }

@@ -77,11 +77,14 @@ public class ContractsImpl<CONTRACT> implements IContracts<CONTRACT> {
 		try {
 			pQuery.setString(1, exchangeId);
 			ResultSet r = backend.query(pQuery);
-
-			CONTRACT c = this.getContractInstance();
-			Method method = c.getClass().getMethod("parse", ResultSet.class);
-			method.invoke(c, r);
-			return c;
+			if (r.next()) {
+				CONTRACT c = this.getContractInstance();
+				Method method = c.getClass()
+						.getMethod("parse", ResultSet.class);
+				method.invoke(c, r);
+				return c;
+			}
+			return null;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,11 +113,14 @@ public class ContractsImpl<CONTRACT> implements IContracts<CONTRACT> {
 		try {
 			pQuery.setString(1, id);
 			ResultSet r = backend.query(pQuery);
-
-			CONTRACT c = this.getContractInstance();
-			Method method = c.getClass().getMethod("parse", ResultSet.class);
-			method.invoke(c, r);
-			return c;
+			if (r.next()) {
+				CONTRACT c = this.getContractInstance();
+				Method method = c.getClass()
+						.getMethod("parse", ResultSet.class);
+				method.invoke(c, r);
+				return c;
+			}
+			// return null;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

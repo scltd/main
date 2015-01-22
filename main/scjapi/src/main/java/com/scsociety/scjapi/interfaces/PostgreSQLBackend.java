@@ -153,6 +153,14 @@ public class PostgreSQLBackend implements IBackend {
 			e.printStackTrace();
 		}
 	}
+	public void rollback()
+	{
+		try {
+			connection.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public PreparedStatement getAccountByIdQuery() 
 	{
@@ -168,6 +176,15 @@ public class PostgreSQLBackend implements IBackend {
 	{
 		try {
 			return connection.prepareStatement(SQLQueries.ACCOUNT_BY_NAME);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public PreparedStatement getUpdateAccountQuery() {
+		try {
+			return connection.prepareStatement(SQLQueries.UPDATE_ACCOUNT);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

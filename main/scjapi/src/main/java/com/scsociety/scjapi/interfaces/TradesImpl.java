@@ -76,8 +76,13 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 	}
 
 	public void rollback() {
-		// TODO Auto-generated method stub
+		backend.rollback();
 
 	}
+	public void commit() 
+	{
+		backend.commit();
+	}
+
 
 }

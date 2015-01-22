@@ -13,4 +13,5 @@ public interface ITrades<TRADE> extends Serializable {
 			Integer size, Double price, String desc, Integer type,
 			Integer tradeno);
 	public void rollback();
+	public void commit();
 }

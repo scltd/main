@@ -12,6 +12,7 @@ public interface IBackend extends Serializable
 	public Boolean intialize(Properties config);
 	public Boolean disconnect();
 	public void commit();
+	public void rollback();
 	public PreparedStatement getContractsQuery();
 	public PreparedStatement getContractByIdQuery();
 	public PreparedStatement getContractByEidQuery();
@@ -21,5 +22,6 @@ public interface IBackend extends Serializable
 	public PreparedStatement getAccountByNameQuery();
 	public PreparedStatement getInsertTradeQuery();
 	public PreparedStatement getDeleteTradeQuery();
+	public PreparedStatement getUpdateAccountQuery();
 	public ResultSet query(PreparedStatement p);	
 }

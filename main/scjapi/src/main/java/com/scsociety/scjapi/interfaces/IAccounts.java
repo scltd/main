@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface IAccounts<ACCOUNT> extends Serializable
 {
-	public ACCOUNT loadAccountById(String uuid);
-	public ACCOUNT loadAccountByName(String name);
+	public List<ACCOUNT> loadAccountById(String uuid);
+	public List<ACCOUNT> loadAccountByName(String name);
 	public List<ACCOUNT> getAllAccounts();
-	public boolean updateAccount(ACCOUNT account);
+	public boolean updateAccount(String uuid,Integer today,Double equity);
 	public void rollback();
 }

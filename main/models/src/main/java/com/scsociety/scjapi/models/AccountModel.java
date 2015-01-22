@@ -73,6 +73,14 @@ public class AccountModel implements Serializable {
 		return equity;
 	}
 
+	public final void updateEquity(Double equity) {
+		this.equity += equity;
+	}
+
+	public final void updateToday(Integer position) {
+		this.today += position;
+	}
+
 	public final void setEquity(Double equity) {
 		this.equity = equity;
 	}
