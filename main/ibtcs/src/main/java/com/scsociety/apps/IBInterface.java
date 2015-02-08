@@ -1,7 +1,5 @@
 package com.scsociety.apps;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -15,21 +13,14 @@ import com.ib.client.Execution;
 import com.ib.client.Order;
 import com.ib.client.OrderState;
 import com.ib.client.UnderComp;
-import com.scsociety.scjapi.interfaces.ContractsImpl;
-import com.scsociety.scjapi.interfaces.IContracts;
-import com.scsociety.scjapi.interfaces.ITrades;
-import com.scsociety.scjapi.interfaces.TradesImpl;
-import com.scsociety.scjapi.models.TradeModel;
+import com.scsociety.scjapi.risk.RiskManagement;
 
 public class IBInterface implements EWrapper {
-	private ITrades<TradeModel> tradesInterface;
-	private IContracts<com.scsociety.scjapi.models.Contract> contractsInterface;
+	private RiskManagement _riskMgmt;
 	final static Logger log = LoggerFactory.getLogger(IBInterface.class);
 
 	public IBInterface(Properties config) {
-		tradesInterface = new TradesImpl<TradeModel>(config, TradeModel.class);
-		contractsInterface = new ContractsImpl<com.scsociety.scjapi.models.Contract>(
-				config, com.scsociety.scjapi.models.Contract.class);
+		_riskMgmt = new RiskManagement(config);
 	}
 
 	public void error(Exception e) {
@@ -153,16 +144,19 @@ public class IBInterface implements EWrapper {
 	}
 
 	public void execDetails(int reqId, Contract contract, Execution execution) {
-		if (execution.m_side.equals("SLD"))
-		{
+		if (execution.m_side.equals("SLD")) {
 			execution.m_cumQty *= -1;
 		}
 		log.trace("execDetails [{}],{} - {}@{} {}[{}]", reqId,
 				contract.m_localSymbol, execution.m_cumQty, execution.m_price,
-				execution.m_clientId,execution.m_execId);
-		com.scsociety.scjapi.models.Contract c = contractsInterface.getContractById(new Integer(contract.m_conId).toString());
-		tradesInterface.insertTrade("SCLPER",c.getUuid(),  "SCSTRD01", execution.m_cumQty , execution.m_price, "Manualy executed", 0,false);
-//		tradesInterface.updatePosition()
+				execution.m_clientId, execution.m_execId);
+		if (!_riskMgmt.insertPosition(execution.m_clientId,new Integer(contract.m_conId).toString(),
+				execution.m_cumQty, execution.m_price)) {
+			log.error("Failed to insert trade: {},{},{},{}",
+					execution.m_clientId, contract.m_conId, execution.m_cumQty,
+					execution.m_price);
+		}
+		// tradesInterface.updatePosition()
 	}
 
 	public void execDetailsEnd(int reqId) {

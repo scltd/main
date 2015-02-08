@@ -23,7 +23,7 @@ public class Test {
 	    log.trace("TRACE TEST");
 	    Properties p = new Properties();
 		try {
-			p.loadFromXML(new FileInputStream(new File("/tmp/connection.properties.xml")));
+			p.load(new FileInputStream(new File("/Users/zummie/scs.properties")));
 			
 		} catch (InvalidPropertiesFormatException e) {
 			// TODO Auto-generated catch block
