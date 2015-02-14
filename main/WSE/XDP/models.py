@@ -2,6 +2,17 @@ import logging
 import sortedcontainers as sct
 from consts import *
 
+
+class Trade(object):
+  def __init__(self):
+    self.id = 0
+    self.ts = None
+    self.price = 0
+    self.volume = 0
+    self.cum_qty = 0
+    self.high = 0
+    self.low = 0
+    self.indicator = None
 class Order(object):
   # 2015-01-29 10:16:16,295:DEBUG:[handleOrderUpdate] ['MsgSize=62', 'MsgType=230', 'SymbolIndex=10616', 'SourceTime=04:00:10.534', 'SourceSeqNum=10838', 'Price=50', 'AggregatedVolume=46881', 'Volume=10000', 'LinkID=0', 'OrderID=17', 'SystemID=11', 'SourceTimeMicroSecs=224', 'NumberOrders=5', 'Side=2', 'OrderType=2', 'ActionType=A', 'PriceScaleCode=2', 'OrderDate=20130415', 'OrderPriorityDate=20130415', 'OrderPriorityTime=40010534', 'OrderPriorityMicroSecs=196', 'OrderOrigin=.', 'Filler=0']
 
@@ -36,27 +47,46 @@ class Market(object):
     self.receiveTS = 0L
     self.buys = sct.SortedDict()
     self.sells = sct.SortedDict()
-    
+    self.cumulative_qty = 0
+    self.a = [Side(),Side(),Side()]
+    self.b = [Side(),Side(),Side()]
     self.last = Side()
     self.orders = {}
   def dump_market(self):
-    b = [Side(),Side(),Side()]
-    a = [Side(),Side(),Side()]
     for bid in enumerate(reversed(self.buys.keys())):
       if bid[0] == 3: break
+      self.b[bid[0]].no_contributors = 0
+      self.b[bid[0]].qty = 0
+      self.b[bid[0]].price = 0.0
+      self.b[bid[0]].ts = None
       for z in self.buys[bid[1]].values():
-        b[bid[0]].price = z.price
-        b[bid[0]].qty += z.qty
-        b[bid[0]].no_contributors += 1        
+        self.b[bid[0]].price = z.price
+        self.b[bid[0]].qty += z.qty
+        self.b[bid[0]].no_contributors += 1
+        self.b[bid[0]].ts = z.ts       
     for ask in enumerate(self.sells.keys()):
       if ask[0] == 3: break
+      self.a[ask[0]].no_contributors = 0
+      self.a[ask[0]].qty = 0
+      self.a[ask[0]].price = 0
+      self.a[ask[0]].ts = None
       for z in self.sells[ask[1]].values():
-        a[ask[0]].price = z.price
-        a[ask[0]].qty += z.qty
-        a[ask[0]].no_contributors += 1
+        self.a[ask[0]].price = z.price
+        self.a[ask[0]].qty += abs(z.qty)
+        self.a[ask[0]].no_contributors += 1
+        self.a[ask[0]].ts = z.ts
+    #logging.info("TOP[0] last: %d @ %3.3f | %d | %s" % (self.last.qty,self.last.price,self.cumulative_qty,self.last.ts))
+    csv_line = ""
     for i in xrange(3):
-      if b[0].price >= a[0].price: logging.info("TOP: CROSSED")
-      logging.info("TOP[%d] %s | %s - %s" % (i,b[i],a[i],self.exchangeTS))
+      #if self.b[0].price >= self.a[0].price: logging.info("TOP: CROSSED - %s" % self.exchangeTS)
+      logging.info("TOP[%d] %s | %s - %s" % (i,self.b[i],self.a[i],self.a[i].ts))
+  def add_trade(self,trade):
+    self.cumulative_qty = trade.cum_qty
+    self.last.qty = trade.volume
+    self.last.price = trade.price / self.contract.multiplier
+    self.last.ts = trade.ts
+    self.exchangeTS = trade.ts
+    
   def add_order(self, order):
     orderList = None
     price = order.price
@@ -83,8 +113,9 @@ class Market(object):
       if order.qty > 0: del(self.buys[price])
       else: 
         del(self.sells[price])
-    if self.contract.name == "JSW":
-      logging.info("ORDER: %s" % (str(order)))
+    self.exchangeTS = order.ts
+    if self.contract.name == "PKO":
+      #logging.info("ORDER: %s" % (str(order)))
       self.dump_market()
 class WSEContract(object):
   def __init__(self, id, isin, currency, name, mplier, lotsize):

@@ -11,7 +11,7 @@ class XDPDumpParser:
     self.date = date
   def handleInstrumentStateChange(self, msg):
     logging.info("[handleInstrumentStateChange] %s", str(msg))
-  def handleOrderUpdate(self, msg):
+  def handleOrderUpdate(self, msg, recvTime):
     logging.debug("[handleOrderUpdate] %s", str(msg))
     contract = None
     order = Order()
@@ -23,9 +23,9 @@ class XDPDumpParser:
         contract = self.cc[symId]
       if sF[0] == "SourceTime":
         ssF = sF[1].split(".")
-        contract.market.exchangeTS = datetime.strptime("%s %s" % (self.date, ssF[0]), "%Y%m%d %H:%M:%S") + timedelta(milliseconds=int(ssF[1])) 
+        order.ts = datetime.strptime("%s %s" % (self.date, ssF[0]), "%Y%m%d %H:%M:%S") + timedelta(milliseconds=int(ssF[1])) 
       if sF[0] == "SourceTimeMicroSecs":
-        contract.market.exchangeTS += timedelta(microseconds=int(sF[1])) 
+        order.ts += timedelta(microseconds=int(sF[1])) 
 #        logging.info(contract.market.exchangeTS) 
       if sF[0] == "Volume":
         order.qty = int(sF[1])
@@ -59,8 +59,65 @@ class XDPDumpParser:
     except KeyError:
       logging.error("ERROR: %s" % contract.name)
       logging.error("ERROR: %s" % (str(order)))
-  def handleTradeFullInformation(self, msg):
+  def handleTradeFullInformation(self, msg, recvTime):
     logging.debug("[handleTradeFullInformation] %s", str(msg))
+    #['MsgSize=66', 
+    #'MsgType=240', 
+    #'SymbolIndex=11302',
+    #'SourceTime=07:44:02.361',
+    #'TradeIDNumber=24', 
+    #'QuoteLinkID=0', 
+    #'SourceSeqNum=129040', 
+    #'Price=8900', 
+    #'Volume=162', 
+    #'CumulativeQuantity=1063', 
+    #'HighestPrice=8935', 
+    #'LowestPrice=8860', 
+    #'VariationLastPrice=45', 
+    #'SystemID=11', 
+    #'SourceTimeMicroSecs=728', 
+    #'Filler=0', 
+    #'SmallTradeIndicator=', 
+    #'TradCond2=0', 
+    #'TradCond3=0', 
+    #'TradeOrigin=B', 
+    #'TickDirection=0', 
+    #'OpeningTradeIndicator=S', 
+    #'VariationScaleCode=2', 
+    #'PriceScaleCode=2',
+    #'SSTrade=N']
+    contract = None
+    trade = Trade()
+    for field in msg:
+      sF = field.split("=")
+      if sF[0] == "SymbolIndex":
+        symId = int(sF[1])
+        contract = self.cc[symId]
+        
+      if sF[0] == "SourceTime":
+        ssF = sF[1].split(".")        
+        trade.ts = datetime.strptime("%s %s" % (self.date, ssF[0]), "%Y%m%d %H:%M:%S") + timedelta(milliseconds=int(ssF[1])) 
+      if sF[0] == "SourceTimeMicroSecs":
+        trade.ts += timedelta(microseconds=int(sF[1]))
+      if sF[0] == "Volume":
+        trade.volume = int(sF[1])
+      if sF[0] == "Price":
+        trade.price = int(sF[1])
+      if sF[0] == "HighestPrice":
+        trade.high = int(sF[1])
+      if sF[0] == "LowestPrice":
+        trade.low = int(sF[1])
+      if sF[0] == "OpeningTradeIndicator":
+        trade.indicator = sF[1]
+      if sF[0] == "CumulativeQuantity":
+        trade.cum_qty = int(sF[1])
+    try:
+      contract.market.add_trade(trade)
+    except KeyError:
+      logging.error("ERROR: %s" % contract.name)
+      logging.error("ERROR: %s" % (str(trade)))
+      
+       
   def handlePriceUpdate(self, msg):
     logging.debug("[handlePriceUpdate] %s", str(msg))
   def handleAuctionSummary(self, msg):

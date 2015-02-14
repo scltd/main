@@ -7,7 +7,7 @@ from messages import *
 import logging
 
 
-logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s',level=logging.DEBUG,filename=None)
+logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s',level=logging.INFO,filename=None)
 fh = open('/Users/zummie/2013-04/2013-04-WIG30-101.xdp')
 
 parseRe = re.compile("(\[.*\])$")
@@ -26,17 +26,15 @@ for i in fh:
     if msgType == MessageTypes.InstrumentStateChange:
       parse.handleInstrumentStateChange(sMsg)
     elif msgType == MessageTypes.OrderUpdate:
-      parse.handleOrderUpdate(sMsg)
+      parse.handleOrderUpdate(sMsg,recvTime)
     elif msgType == MessageTypes.TradeFullInformation:
-      parse.handleTradeFullInformation(sMsg)
+      parse.handleTradeFullInformation(sMsg,recvTime)
     elif msgType == MessageTypes.PriceUpdate:
       parse.handlePriceUpdate(sMsg)
     elif msgType == MessageTypes.AuctionSummary:
       parse.handleAuctionSummary(sMsg)
     elif msgType == MessageTypes.ClosingPrice:
       parse.handleClosingPrice(sMsg)
-    elif msgType == MessageTypes.InstrumentStateChange:
-      parse.handleInstrumentStateChange(sMsg)
     elif msgType == MessageTypes.IndicativeMatchingPrice:
       parse.handleIndicativeMatchingPrice(sMsg)
     elif msgType == MessageTypes.Collars:
