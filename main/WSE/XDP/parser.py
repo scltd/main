@@ -15,6 +15,9 @@ class XDPDumpParser:
     logging.debug("[handleOrderUpdate] %s", str(msg))
     contract = None
     order = Order()
+    recvTime = recvTime.split(".")
+    recvTime = datetime.strptime("%s %s" % (self.date, recvTime[0]), "%Y%m%d %H:%M:%S") + timedelta(milliseconds=int(recvTime[1])) 
+    order.rts = recvTime
     for field in msg:
 # 2015-01-29 10:16:16,295:DEBUG:[handleOrderUpdate] ['MsgSize=62', 'MsgType=230', 'SymbolIndex=10616', 'SourceTime=04:00:10.534', 'SourceSeqNum=10838', 'Price=50', 'AggregatedVolume=46881', 'Volume=10000', 'LinkID=0', 'OrderID=17', 'SystemID=11', 'SourceTimeMicroSecs=224', 'NumberOrders=5', 'Side=2', 'OrderType=2', 'ActionType=A', 'PriceScaleCode=2', 'OrderDate=20130415', 'OrderPriorityDate=20130415', 'OrderPriorityTime=40010534', 'OrderPriorityMicroSecs=196', 'OrderOrigin=.', 'Filler=0']
       sF = field.split("=")
@@ -86,8 +89,11 @@ class XDPDumpParser:
     #'VariationScaleCode=2', 
     #'PriceScaleCode=2',
     #'SSTrade=N']
-    contract = None
     trade = Trade()
+    recvTime = recvTime.split(".")
+    recvTime = datetime.strptime("%s %s" % (self.date, recvTime[0]), "%Y%m%d %H:%M:%S") + timedelta(milliseconds=int(recvTime[1])) 
+    trade.rts = recvTime    
+    contract = None
     for field in msg:
       sF = field.split("=")
       if sF[0] == "SymbolIndex":
@@ -122,8 +128,25 @@ class XDPDumpParser:
     logging.debug("[handlePriceUpdate] %s", str(msg))
   def handleAuctionSummary(self, msg):
     logging.debug("[handleAuctionSummary] %s", str(msg))
-  def handleClosingPrice(self, msg):
+  def handleClosingPrice(self, msg,recvTime):
     logging.debug("[handleClosingPrice] %s", str(msg))
+    trade = Trade()
+    recvTime = recvTime.split(".")
+    recvTime = datetime.strptime("%s %s" % (self.date, recvTime[0]), "%Y%m%d %H:%M:%S") + timedelta(milliseconds=int(recvTime[1])) 
+    trade.rts = recvTime    
+    contract = None
+    for field in msg:
+      sF = field.split("=")
+      if sF[0] == "SymbolIndex":
+        symId = int(sF[1])
+        contract = self.cc[symId]
+      if sF[0] == "ClosingPrice":
+        trade.price = int(sF[1])
+        trade.indicator = 'C'
+      if sF[0] == "QtyShares":
+        trade.volume = int(sF[1])
+
+        
   def handleInstrumentStateChange(self, msg):
     logging.debug("[handleInstrumentStateChange] %s", str(msg))
   def handleIndicativeMatchingPrice(self, msg):

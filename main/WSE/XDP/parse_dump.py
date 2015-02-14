@@ -34,7 +34,7 @@ for i in fh:
     elif msgType == MessageTypes.AuctionSummary:
       parse.handleAuctionSummary(sMsg)
     elif msgType == MessageTypes.ClosingPrice:
-      parse.handleClosingPrice(sMsg)
+      parse.handleClosingPrice(sMsg,recvTime)
     elif msgType == MessageTypes.IndicativeMatchingPrice:
       parse.handleIndicativeMatchingPrice(sMsg)
     elif msgType == MessageTypes.Collars:

@@ -1,7 +1,13 @@
 import logging
 import sortedcontainers as sct
 from consts import *
+import datetime
 
+
+def totimestamp(dt, epoch=datetime.datetime(1970,1,1)):
+    td = dt - epoch
+    # return td.total_seconds()
+    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 1e6 
 
 class Trade(object):
   def __init__(self):
@@ -13,6 +19,7 @@ class Trade(object):
     self.high = 0
     self.low = 0
     self.indicator = None
+    self.rts = None
 class Order(object):
   # 2015-01-29 10:16:16,295:DEBUG:[handleOrderUpdate] ['MsgSize=62', 'MsgType=230', 'SymbolIndex=10616', 'SourceTime=04:00:10.534', 'SourceSeqNum=10838', 'Price=50', 'AggregatedVolume=46881', 'Volume=10000', 'LinkID=0', 'OrderID=17', 'SystemID=11', 'SourceTimeMicroSecs=224', 'NumberOrders=5', 'Side=2', 'OrderType=2', 'ActionType=A', 'PriceScaleCode=2', 'OrderDate=20130415', 'OrderPriorityDate=20130415', 'OrderPriorityTime=40010534', 'OrderPriorityMicroSecs=196', 'OrderOrigin=.', 'Filler=0']
 
@@ -26,6 +33,7 @@ class Order(object):
     self.order_type = 0
     self.price = 0
     self.side = ''
+    self.rts = None
   def __str__(self):
     return "Order [%3s@%.2f] %d|%s|%s" % (self.qty, self.price, self.aggregated_qty, self.order_type, self.action_type)
 
@@ -33,7 +41,7 @@ class Side(object):
   def __init__(self):
     self.price = 0.0
     self.qty = 0
-    self.ts = 0
+    self.ts = datetime.datetime(1970,1,1)
     self.no_contributors = 0
   def __str__(self):
     return "%d@%.3f [%d] - [%s]" % (self.qty, self.price, self.no_contributors,self.ts)
@@ -52,6 +60,8 @@ class Market(object):
     self.b = [Side(),Side(),Side()]
     self.last = Side()
     self.orders = {}
+    self.open = 0.0
+    self.close = 0.0
   def dump_market(self):
     for bid in enumerate(reversed(self.buys.keys())):
       if bid[0] == 3: break
@@ -75,22 +85,37 @@ class Market(object):
         self.a[ask[0]].qty += abs(z.qty)
         self.a[ask[0]].no_contributors += 1
         self.a[ask[0]].ts = z.ts
-    #logging.info("TOP[0] last: %d @ %3.3f | %d | %s" % (self.last.qty,self.last.price,self.cumulative_qty,self.last.ts))
-    csv_line = ""
+    #logging.info("TOP[x] last: %d @ %3.3f | %d | %s" % (self.last.qty,self.last.price,self.cumulative_qty,self.last.ts))
+    rtime_t = totimestamp(self.receiveTS)
+    rtime = "%.6f" % rtime_t
+    rtime = tuple(rtime.split("."))
+    csv_line = "%s;%s;%d;%d;0;%s;F;0;0;0;0;0;A;101;%.3f;0;%d;%.3f;%.3f;" % (rtime[0],rtime[1],rtime_t*10**6,totimestamp(self.last.ts)*10**6,self.contract.name,self.last.price,self.cumulative_qty,self.open,self.close)
     for i in xrange(3):
+      csv_line += "%.3f;%d;%d;" % (self.b[i].price,self.b[i].qty,self.b[i].no_contributors)
+      csv_line += "%.3f;%d;%d;" % (self.a[i].price,self.a[i].qty,self.a[i].no_contributors)
+    for i in xrange(7):
+      csv_line += "0.000;0;0;0.000;0;0;"
+    csv_line += "%d" % self.last.qty    
+    csv_line += ";;"
+    print csv_line    
       #if self.b[0].price >= self.a[0].price: logging.info("TOP: CROSSED - %s" % self.exchangeTS)
-      logging.info("TOP[%d] %s | %s - %s" % (i,self.b[i],self.a[i],self.a[i].ts))
+      #logging.info("TOP[%d] %s | %s - %s" % (i,self.b[i],self.a[i],self.a[i].ts))
   def add_trade(self,trade):
-    self.cumulative_qty = trade.cum_qty
     self.last.qty = trade.volume
     self.last.price = trade.price / self.contract.multiplier
     self.last.ts = trade.ts
     self.exchangeTS = trade.ts
-    
+    self.receiveTS = trade.rts
+    if trade.indicator == 'O':self.open = self.last.price
+    if trade.indicator == 'C':self.cumulative_qty += trade.volume
+    else: self.cumulative_qty = trade.cum_qty
   def add_order(self, order):
     orderList = None
     price = order.price
     order.price = price / self.contract.multiplier
+    self.receiveTS = order.rts
+    self.exchangeTS = order.ts
+
     if not price:return
     if order.qty > 0:
       if self.buys.has_key(price):
@@ -113,10 +138,9 @@ class Market(object):
       if order.qty > 0: del(self.buys[price])
       else: 
         del(self.sells[price])
-    self.exchangeTS = order.ts
-    if self.contract.name == "PKO":
+    #if self.contract.name == "PKO":
       #logging.info("ORDER: %s" % (str(order)))
-      self.dump_market()
+    self.dump_market()
 class WSEContract(object):
   def __init__(self, id, isin, currency, name, mplier, lotsize):
     self.isin = isin
