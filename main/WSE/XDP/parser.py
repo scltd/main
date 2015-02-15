@@ -5,10 +5,10 @@ import logging
 
 
 class XDPDumpParser:
-  def __init__(self, outputGenerator=None, date="20130415"):
+  def __init__(self, outputGenerator=None):
     self.output = outputGenerator
+    self.date = ""
     self.cc = {}
-    self.date = date
   def handleInstrumentStateChange(self, msg):
     logging.info("[handleInstrumentStateChange] %s", str(msg))
   def handleOrderUpdate(self, msg, recvTime):
@@ -175,8 +175,11 @@ class XDPDumpParser:
         mplier = float(sF[1])
       elif sF[0] == "LotSize":
         lotsize = int(sF[1])
-    self.cc[symId] = WSEContract(symId, isin, currency, name, mplier, lotsize)
-    logging.info("Contract: %d - %s" % (symId, name))
+      elif sF[0] == "EventDate":
+        date = sF[1]
+        self.date = date
+    self.cc[symId] = WSEContract(symId, isin, currency, name, mplier, lotsize,date)
+    logging.info("Contract: %d - %s [%s]" % (symId, name,self.date))
   def handleShortSaleChange(self, msg):
     logging.debug("[handleShortSaleChange] %s", str(msg))
   def handleSessionSummary(self, msg):

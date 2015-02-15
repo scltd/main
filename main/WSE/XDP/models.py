@@ -49,7 +49,7 @@ class Side(object):
     return self.__str__()
 
 class Market(object):
-  def __init__(self, contract, layers):
+  def __init__(self, contract, layers,date):
     self.contract = contract
     self.exchangeTS = 0L
     self.receiveTS = 0L
@@ -62,6 +62,8 @@ class Market(object):
     self.orders = {}
     self.open = 0.0
     self.close = 0.0
+    self.date = date
+
   def dump_market(self):
     for bid in enumerate(reversed(self.buys.keys())):
       if bid[0] == 3: break
@@ -89,14 +91,14 @@ class Market(object):
     rtime_t = totimestamp(self.receiveTS)
     rtime = "%.6f" % rtime_t
     rtime = tuple(rtime.split("."))
-    csv_line = "%s;%s;%d;%d;0;%s;F;0;0;0;0;0;A;101;%.3f;0;%d;%.3f;%.3f;" % (rtime[0],rtime[1],rtime_t*10**6,totimestamp(self.last.ts)*10**6,self.contract.name,self.last.price,self.cumulative_qty,self.open,self.close)
+    csv_line = "%s,%s,%d,%d,%d,0,%s,F,,,,,,A,101,%.3f,,%d,%.3f,%.3f," % (rtime[0],rtime[1],rtime_t*10**6,totimestamp(self.exchangeTS)*10**9,totimestamp(self.last.ts)*10**9,self.contract.name,self.last.price,self.cumulative_qty,self.open,self.close)
     for i in xrange(3):
-      csv_line += "%.3f;%d;%d;" % (self.b[i].price,self.b[i].qty,self.b[i].no_contributors)
-      csv_line += "%.3f;%d;%d;" % (self.a[i].price,self.a[i].qty,self.a[i].no_contributors)
+      csv_line += "%.3f,%d,%d," % (self.b[i].price,self.b[i].qty,self.b[i].no_contributors)
+      csv_line += "%.3f,%d,%d," % (self.a[i].price,self.a[i].qty,self.a[i].no_contributors)
     for i in xrange(7):
-      csv_line += "0.000;0;0;0.000;0;0;"
-    csv_line += "%d" % self.last.qty    
-    csv_line += ";;"
+      csv_line += "0.000,0,0,0.000,0,0,"
+    csv_line += "%d," % self.last.qty    
+    csv_line += ",,"
     print csv_line    
       #if self.b[0].price >= self.a[0].price: logging.info("TOP: CROSSED - %s" % self.exchangeTS)
       #logging.info("TOP[%d] %s | %s - %s" % (i,self.b[i],self.a[i],self.a[i].ts))
@@ -107,7 +109,9 @@ class Market(object):
     self.exchangeTS = trade.ts
     self.receiveTS = trade.rts
     if trade.indicator == 'O':self.open = self.last.price
-    if trade.indicator == 'C':self.cumulative_qty += trade.volume
+    if trade.indicator == 'C':
+      self.cumulative_qty += trade.volume
+      self.close = self.last.price
     else: self.cumulative_qty = trade.cum_qty
   def add_order(self, order):
     orderList = None
@@ -142,11 +146,11 @@ class Market(object):
       #logging.info("ORDER: %s" % (str(order)))
     self.dump_market()
 class WSEContract(object):
-  def __init__(self, id, isin, currency, name, mplier, lotsize):
+  def __init__(self, id, isin, currency, name, mplier, lotsize,date):
     self.isin = isin
     self.currency = currency
     self.name = name
     self.id = id
     self.multiplier = mplier
     self.lotsize = 0
-    self.market = Market(self, 3)
+    self.market = Market(self, 3,date)
