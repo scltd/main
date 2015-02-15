@@ -146,11 +146,12 @@ class Market(object):
       #logging.info("ORDER: %s" % (str(order)))
     self.dump_market()
 class WSEContract(object):
-  def __init__(self, id, isin, currency, name, mplier, lotsize,date):
+  def __init__(self, id, isin, currency, name, mplier, lotsize,date,expiration):
     self.isin = isin
     self.currency = currency
     self.name = name
     self.id = id
     self.multiplier = mplier
     self.lotsize = 0
+    self.expiration = expiration
     self.market = Market(self, 3,date)

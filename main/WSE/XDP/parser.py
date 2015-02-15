@@ -161,6 +161,8 @@ class XDPDumpParser:
     name = ""
     mplier = 0
     lotsize = 0
+    expiration = ""
+    mnemonic = ""
     for field in msg:
       sF = field.split("=")
       if sF[0] == "SymbolIndex":
@@ -169,8 +171,12 @@ class XDPDumpParser:
         isin = sF[1]
       elif sF[0] == "TradingCurrency":
         currency = sF[1]
-      elif sF[0] == "Mnemo":
+      elif sF[0] == "InstrumentName":
         name = sF[1].strip('.')
+      elif sF[0] == "Mnemo":
+        mnemonic = sF[1].strip('.')
+      elif sF[0] == "ExpiryDate":
+        expiration = sF[1]
       elif sF[0] == "Multiplier":
         mplier = float(sF[1])
       elif sF[0] == "LotSize":
@@ -178,7 +184,8 @@ class XDPDumpParser:
       elif sF[0] == "EventDate":
         date = sF[1]
         self.date = date
-    self.cc[symId] = WSEContract(symId, isin, currency, name, mplier, lotsize,date)
+    if mnemonic:name=mnemonic
+    self.cc[symId] = WSEContract(symId, isin, currency, name, mplier, lotsize,date,expiration)
     logging.info("Contract: %d - %s [%s]" % (symId, name,self.date))
   def handleShortSaleChange(self, msg):
     logging.debug("[handleShortSaleChange] %s", str(msg))
