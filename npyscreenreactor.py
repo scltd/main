@@ -25,6 +25,7 @@ Then use twisted.internet APIs as usual.
 Stop the event loop using reactor.stop()
 
 Maintainer: Mark Tearle
+
 """
 
 from twisted.python import log, runtime
@@ -66,11 +67,11 @@ class NpyscreenReactor(selectreactor.SelectReactor):
       """
       Start the reactor.
       """
-      self.addSystemEventTrigger("after", "shutdown", self._stopNpyscreen)
-      self.startRunning(installSignalHandlers=installSignalHandlers)
       # add cleanup events:
+      self.startRunning(installSignalHandlers=installSignalHandlers)
       # put event on queue to do twisted things 
       self.doIteration(0)
+      self.addSystemEventTrigger("after", "shutdown", self._stopNpyscreen)
       self.npyscreenapp.run()
 
 def install():
