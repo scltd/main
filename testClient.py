@@ -25,9 +25,6 @@ class TestApp(npyscreen.StandardApp):
   def while_waiting(self):
     pass
 
-  def when_exit(self,val):
-    self.parentApp.switchForm(None)
-
 class MainForm(npyscreen.Form):
   def create(self):
     self.testWdg = self.add(npyscreen.TitleText, name='MSG', value='NONE',editable=False,color='CAUTIONHL')
