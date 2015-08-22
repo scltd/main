@@ -9,5 +9,6 @@
   	<module>models</module>
   	<module>scjapi</module>
   	<module>ibtcs</module>
+  	<module>ibbook</module>
   </modules>
 </project>

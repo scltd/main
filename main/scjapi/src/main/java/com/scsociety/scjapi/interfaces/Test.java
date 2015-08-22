@@ -16,8 +16,8 @@ public class Test {
 	{
 		Properties p = new Properties();
 		try {
-			p.loadFromXML(new FileInputStream(new File("/tmp/connection.properties.xml")));
-			
+			p.load((new FileInputStream(new File("/tmp/connection.properties"))));
+			System.out.println("TEST");
 		} catch (InvalidPropertiesFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

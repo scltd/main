@@ -33,23 +33,24 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 			Integer size, Double price, String desc, Integer type,
 			boolean commit) {
 		PreparedStatement prepQuery = backend.getInsertTradeQuery();
+		if (prepQuery != null)
+			try {
 
-		try {
-			prepQuery.setString(1, account);
-			prepQuery.setString(2, contract);
-			prepQuery.setString(3, trader);
-			prepQuery.setInt(4, size);
-			prepQuery.setDouble(5, price);
-			prepQuery.setString(6, desc);
-			prepQuery.setInt(7, type);
-			prepQuery.execute();
-			if (commit)
-				backend.commit();
-			return true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+				prepQuery.setString(1, account);
+				prepQuery.setString(2, contract);
+				prepQuery.setString(3, trader);
+				prepQuery.setInt(4, size);
+				prepQuery.setDouble(5, price);
+				prepQuery.setString(6, desc);
+				prepQuery.setInt(7, type);
+				prepQuery.execute();
+				if (commit)
+					backend.commit();
+				return true;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return false;
 	}
 
@@ -63,15 +64,15 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 
 	public boolean deleteTrade(Integer tradeNo) {
 		PreparedStatement prepQuery = backend.getDeleteTradeQuery();
-
-		try {
-			prepQuery.setInt(1, tradeNo);
-			prepQuery.execute();
-			backend.commit();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		if (prepQuery != null)
+			try {
+				prepQuery.setInt(1, tradeNo);
+				prepQuery.execute();
+				backend.commit();
+				return true;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		return false;
 	}
 
@@ -79,10 +80,9 @@ public class TradesImpl<TRADE> implements ITrades<TRADE> {
 		backend.rollback();
 
 	}
-	public void commit() 
-	{
+
+	public void commit() {
 		backend.commit();
 	}
-
 
 }

@@ -43,6 +43,7 @@ public class ContractsImpl<CONTRACT> implements IContracts<CONTRACT> {
 		PreparedStatement pQuery = backend.getContractsQuery();
 		try {
 			ResultSet r = backend.query(pQuery);
+			if (r != null)
 			while (r.next()) {
 				CONTRACT c = this.getContractInstance();
 				Method method = c.getClass()

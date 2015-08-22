@@ -38,8 +38,12 @@ public class PostgreSQLBackend implements IBackend {
 			return false;
 		}
 		try {
-			connection = DriverManager.getConnection(
-					configProps.getProperty("backendURI"), configProps);
+			System.out.println(configProps.toString());
+			String url = "jdbc:postgresql://sql.scsociety.com:5432/scltd";
+			String user = "scs";
+			String password = "%0l1d%t4t3%0c13ty";
+
+			connection = DriverManager.getConnection(url,user,password);
 			connection.setAutoCommit(false);
 			return true;
 		} catch (SQLException e) {
@@ -79,13 +83,15 @@ public class PostgreSQLBackend implements IBackend {
 
 	public PreparedStatement getContractsQuery() {
 		try {
-			return connection.prepareStatement(SQLQueries.ALL_CONTRACTS);
+			if (connection != null)
+				return connection.prepareStatement(SQLQueries.ALL_CONTRACTS);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 
 	}
+
 	public PreparedStatement getContractByIdQuery() {
 		try {
 			return connection.prepareStatement(SQLQueries.CONTRACT_BY_UUID);
@@ -95,9 +101,11 @@ public class PostgreSQLBackend implements IBackend {
 		return null;
 
 	}
+
 	public PreparedStatement getContractByEidQuery() {
 		try {
-			return connection.prepareStatement(SQLQueries.CONTRACT_BY_EXCHANGE_ID);
+			return connection
+					.prepareStatement(SQLQueries.CONTRACT_BY_EXCHANGE_ID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -105,30 +113,30 @@ public class PostgreSQLBackend implements IBackend {
 
 	}
 
-	public PreparedStatement getTradesQuery() 
-	{
+	public PreparedStatement getTradesQuery() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public PreparedStatement getAccountsQuery()
-	{
+	public PreparedStatement getAccountsQuery() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public PreparedStatement getInsertTradeQuery() 
-	{
+
+	public PreparedStatement getInsertTradeQuery() {
 		try {
-			return connection.prepareStatement(SQLQueries.INSERT_TRADE);
+			if (connection != null)
+				return connection.prepareStatement(SQLQueries.INSERT_TRADE);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	public PreparedStatement getDeleteTradeQuery() 
-	{
+
+	public PreparedStatement getDeleteTradeQuery() {
 		try {
-			return connection.prepareStatement(SQLQueries.DELETE_TRADE);
+			if (connection != null)
+				return connection.prepareStatement(SQLQueries.DELETE_TRADE);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -138,23 +146,24 @@ public class PostgreSQLBackend implements IBackend {
 	public ResultSet query(PreparedStatement p) {
 
 		try {
-			return p.executeQuery();
+			if (p != null)
+				return p.executeQuery();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	public void commit()
-	{
+
+	public void commit() {
 		try {
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	public void rollback()
-	{
+
+	public void rollback() {
 		try {
 			connection.rollback();
 		} catch (SQLException e) {
@@ -162,8 +171,7 @@ public class PostgreSQLBackend implements IBackend {
 		}
 	}
 
-	public PreparedStatement getAccountByIdQuery() 
-	{
+	public PreparedStatement getAccountByIdQuery() {
 		try {
 			return connection.prepareStatement(SQLQueries.ACCOUNT_BY_UUID);
 		} catch (SQLException e) {
@@ -172,8 +180,7 @@ public class PostgreSQLBackend implements IBackend {
 		return null;
 	}
 
-	public PreparedStatement getAccountByNameQuery() 
-	{
+	public PreparedStatement getAccountByNameQuery() {
 		try {
 			return connection.prepareStatement(SQLQueries.ACCOUNT_BY_NAME);
 		} catch (SQLException e) {

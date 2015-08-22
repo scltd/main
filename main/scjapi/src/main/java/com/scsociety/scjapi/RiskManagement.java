@@ -1,4 +1,4 @@
-package com.scsociety.scjapi.risk;
+package com.scsociety.scjapi;
 
 import java.util.HashMap;
 import java.util.Iterator;
