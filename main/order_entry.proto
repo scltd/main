@@ -1,0 +1,27 @@
+package scsociety.trading.io;
+
+option java_package = "com.scsociety.scjapi.io.network";
+option java_outer_classname = "OrderEntryProto";
+
+
+
+message Order {
+  enum TimeInForce {
+    DAY = 0;
+    GTC = 1;
+    AUC = 2;
+  }
+  enum Type {
+    LMT = 0;
+    STP = 1;
+  }
+  required string contract = 1;
+	required TimeInForce timeInForce = 2;
+	required Type type = 3;
+  required int32 qty = 4;
+	required string price = 5;
+	required string account = 6;
+	optional uint32 filledQty = 7 [default = 0];
+	optional uint32 cumulativeQty = 8 [default = 0];
+	
+}

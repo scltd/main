@@ -1,4 +1,4 @@
-package com.scsociety.scjapi.io.network;
+package com.scsociety.apps.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -22,15 +22,19 @@ public class DiscardHandler extends ChannelHandlerAdapter { // (1)
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
+//		OrderEntryProto.Order c = OrderEntryProto.Order.newBuilder()
+//				.setUuid("test123").setQty(0)
+//				.setTimeInForce(OrderEntryProto.Order.TIF.AUC).build();
+//		ByteBuf encoded = ctx.alloc().buffer(c.getSerializedSize());
+//		encoded.writeBytes(c.toByteArray());
+//		ctx.write(encoded);
+//		ctx.flush();
 		ByteBuf m = (ByteBuf) msg;
-		buf.writeBytes(m); // (2)
+		buf.writeBytes(m);
 		m.release();
-
-		if (buf.readableBytes() >= 4) { // (3)
-			long currentTimeMillis = (buf.readUnsignedInt() - 2208988800L) * 1000L;
-			System.out.println(new Date(currentTimeMillis));
-			ctx.close();
-		}
+		long currentTimeMillis = (buf.readUnsignedInt() - 2208988800L) * 1000L;
+		System.out.println(new Date(currentTimeMillis));
+		// ctx.close();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.scsociety.scjapi.io.network;
+package com.scsociety.apps.network;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -9,10 +9,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-public class GenericTCPServer {
+public class BookServer {
 	private int port;
 
-	public GenericTCPServer(int port) {
+	public BookServer(int port) {
 		this.port = port;
 	}
 
@@ -46,14 +46,5 @@ public class GenericTCPServer {
 			bossGroup.shutdownGracefully();
 		}
 	}
-    public static void main(String[] args) throws Exception {
-        int port;
-        if (args.length > 0) {
-            port = Integer.parseInt(args[0]);
-        } else {
-            port = 8080;
-        }
-        new GenericTCPServer(port).run();
-    }
 
 }

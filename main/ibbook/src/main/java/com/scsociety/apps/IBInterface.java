@@ -1,7 +1,5 @@
 package com.scsociety.apps;
 
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,15 +11,9 @@ import com.ib.client.Execution;
 import com.ib.client.Order;
 import com.ib.client.OrderState;
 import com.ib.client.UnderComp;
-import com.scsociety.scjapi.RiskManagement;
 
 public class IBInterface implements EWrapper {
-	private RiskManagement _riskMgmt;
 	final static Logger log = LoggerFactory.getLogger(IBInterface.class);
-
-	public IBInterface(Properties config) {
-		_riskMgmt = new RiskManagement(config);
-	}
 
 	public void error(Exception e) {
 		log.error("Exception: {}", e.getMessage());
@@ -120,7 +112,6 @@ public class IBInterface implements EWrapper {
 
 	public void accountDownloadEnd(String accountName) {
 		log.info("accountDownloadEnd");
-
 	}
 
 	public void nextValidId(int orderId) {
@@ -150,13 +141,6 @@ public class IBInterface implements EWrapper {
 		log.trace("execDetails [{}],{} - {}@{} {}[{}]", reqId,
 				contract.m_localSymbol, execution.m_cumQty, execution.m_price,
 				execution.m_clientId, execution.m_execId);
-		if (!_riskMgmt.insertPosition(execution.m_clientId,new Integer(contract.m_conId).toString(),
-				execution.m_cumQty, execution.m_price)) {
-			log.error("Failed to insert trade: {},{},{},{}",
-					execution.m_clientId, contract.m_conId, execution.m_cumQty,
-					execution.m_price);
-		}
-		// tradesInterface.updatePosition()
 	}
 
 	public void execDetailsEnd(int reqId) {

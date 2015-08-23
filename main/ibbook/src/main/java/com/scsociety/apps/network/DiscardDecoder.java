@@ -1,4 +1,4 @@
-package com.scsociety.scjapi.io.network;
+package com.scsociety.apps.network;
 
 import java.util.List;
 

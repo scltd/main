@@ -1,6 +1,5 @@
 package com.scsociety.scjapi;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -19,8 +18,8 @@ public class ContractsManagement {
 	public ContractsManagement(Properties config) {
 		contractsInterface = new ContractsImpl<Contract>(config, Contract.class);
 	}
-	List<Contract> loadContracts()
-	{
+
+	List<Contract> loadContracts() {
 		List<Contract> c = contractsInterface.getAllContracts();
 		return c;
 	}
