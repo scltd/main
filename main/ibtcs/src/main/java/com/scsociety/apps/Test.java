@@ -16,31 +16,30 @@ import com.ib.client.ExecutionFilter;
 
 public class Test {
 
-	public static void main(String[] args) 
-	{
-		Logger log = LoggerFactory.getLogger(Test.class);
-	    log.info("Hello World");
-	    log.trace("TRACE TEST");
-	    Properties p = new Properties();
-		try {
-			p.load(new FileInputStream(new File("/Users/zummie/scs.properties")));
-			
-		} catch (InvalidPropertiesFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+  public static void main(String[] args) {
+    Logger log = LoggerFactory.getLogger(Test.class);
+    log.info("Hello World");
+    log.trace("TRACE TEST");
+    Properties p = new Properties();
+    try {
+      p.load(new FileInputStream(new File("/Users/zummie/scs.properties")));
 
-		AnyWrapper z = new IBInterface(p);
-		EClientSocket e = new EClientSocket(z);
-		e.eConnect("localhost", 4001, 10);
-		e.reqAccountSummary(1,"All","NetLiquidation");
-		e.reqExecutions(2, new ExecutionFilter());
-	}
+    } catch (InvalidPropertiesFormatException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    AnyWrapper z = new IBInterface(p);
+    EClientSocket e = new EClientSocket(z);
+    e.eConnect("localhost", 4001, 10);
+    e.reqAccountSummary(1, "All", "NetLiquidation");
+    e.reqExecutions(2, new ExecutionFilter());
+  }
 
 }

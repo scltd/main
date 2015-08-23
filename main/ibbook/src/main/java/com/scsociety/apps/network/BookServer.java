@@ -12,29 +12,28 @@ import java.util.Properties;
 import com.scsociety.apps.OrderEntryInterface;
 
 public class BookServer {
-	private int port;
-	private OrderEntryInterface _orderEntryIF;
+  private int port;
+  private OrderEntryInterface _orderEntryIF;
 
-	public BookServer(Properties config, OrderEntryInterface ev) {
-		port = Integer.parseInt(config.get("ibbook.servicePort").toString());
-		_orderEntryIF = ev;
-	}
+  public BookServer(Properties config, OrderEntryInterface ev) {
+    port = Integer.parseInt(config.get("ibbook.servicePort").toString());
+    _orderEntryIF = ev;
+  }
 
-	public void run() throws Exception {
-		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-		EventLoopGroup workerGroup = new NioEventLoopGroup();
-		try {
-			ServerBootstrap b = new ServerBootstrap();
-			b.group(bossGroup, workerGroup)
-					.channel(NioServerSocketChannel.class)
-					.handler(new LoggingHandler(LogLevel.INFO))
-					.childHandler(new BookServerInitializer(_orderEntryIF));
+  public void run() throws Exception {
+    EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+    EventLoopGroup workerGroup = new NioEventLoopGroup();
+    try {
+      ServerBootstrap b = new ServerBootstrap();
+      b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+          .handler(new LoggingHandler(LogLevel.INFO))
+          .childHandler(new BookServerInitializer(_orderEntryIF));
 
-			b.bind(port).sync().channel().closeFuture().sync();
-		} finally {
-			bossGroup.shutdownGracefully();
-			workerGroup.shutdownGracefully();
-		}
-	}
+      b.bind(port).sync().channel().closeFuture().sync();
+    } finally {
+      bossGroup.shutdownGracefully();
+      workerGroup.shutdownGracefully();
+    }
+  }
 
 }

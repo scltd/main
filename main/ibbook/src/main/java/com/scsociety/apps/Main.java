@@ -11,26 +11,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
-	public static void main(String[] args) throws Exception {
-		Logger log = LoggerFactory.getLogger(Main.class);
+  public static void main(String[] args) throws Exception {
+    Logger log = LoggerFactory.getLogger(Main.class);
 
-		log.info("Hello World");
-		log.trace("TRACE TEST");
-		Properties p = new Properties();
-		try {
-			p.load(new FileInputStream(new File("/Users/zummie/scs.properties")));
+    log.info("Hello World");
+    log.trace("TRACE TEST");
+    Properties p = new Properties();
+    try {
+      p.load(new FileInputStream(new File("/Users/zummie/scs.properties")));
 
-		} catch (InvalidPropertiesFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		BookBorg b = new BookBorg(p);
-		b.run();
-	}
+    } catch (InvalidPropertiesFormatException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    BookBorg b = new BookBorg(p);
+    b.run();
+  }
 }

@@ -56,6 +56,7 @@ public class BookBorg implements EventNotifierInterface, OrderEntryInterface {
     OrderEntryProto.Order reply = OrderEntryProto.Order.newBuilder(order).setStatus(-1).build();
     ctx.writeAndFlush(reply);
   }
+
   public void sendReponse(Order order, ChannelHandlerContext ctx) {
     OrderEntryProto.Order reply = OrderEntryProto.Order.newBuilder(order).setStatus(0).build();
     ctx.writeAndFlush(reply);
@@ -137,15 +138,15 @@ public class BookBorg implements EventNotifierInterface, OrderEntryInterface {
       switch (ord.get_state()) {
         case INSERT:
         case MODIFY: {
-          sendReponse(ord.get_orderWire(),ord.get_context());
+          sendReponse(ord.get_orderWire(), ord.get_context());
           ord.setAck();
           break;
         }
         case CANCEL: {
-          sendReponse(ord.get_orderWire(),ord.get_context());
+          sendReponse(ord.get_orderWire(), ord.get_context());
           _ordersIdMap.remove(orderId);
           _ordersMap.remove(ord.get_contractId());
-          
+
           break;
         }
         case PENDING_MODIFY: {
