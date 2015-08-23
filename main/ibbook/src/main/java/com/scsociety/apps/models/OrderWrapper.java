@@ -37,9 +37,32 @@ public class OrderWrapper implements Serializable {
     _externalOrder.m_action = o.getQty() > 0 ? "BUY" : "SELL";
     _externalOrder.m_totalQuantity = Math.abs(o.getQty());
     _externalOrder.m_clientId = 10;
-    _externalOrder.m_orderType = "LMT";
-    _externalOrder.m_lmtPrice = Double.parseDouble(o.getPrice());
-    _externalOrder.m_tif = "DAY";
+    switch (_orderWire.getType()) {
+      case LMT: {
+        _externalOrder.m_orderType = "LMT";
+        _externalOrder.m_lmtPrice = Double.parseDouble(o.getPrice());
+        break;
+      }
+      case STP: {
+        _externalOrder.m_orderType = "STP";
+        _externalOrder.m_trailStopPrice = Double.parseDouble(o.getPrice());
+        break;
+      }
+    }
+    switch (_orderWire.getTimeInForce()) {
+      case AUC: {
+        _externalOrder.m_tif = "AUC";
+        break;
+      }
+      case DAY: {
+        _externalOrder.m_tif = "DAY";
+        break;
+      }
+      case GTC: {
+        _externalOrder.m_tif = "GTC";
+        break;
+      }
+    }
     _externalOrder.m_transmit = true;
     _context = ctx;
   }

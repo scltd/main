@@ -1,6 +1,6 @@
 package scsociety.trading.io;
 
-option java_package = "com.scsociety.scjapi.io.network";
+option java_package = "com.scsociety.apps.network";
 option java_outer_classname = "OrderEntryProto";
 
 
@@ -23,6 +23,7 @@ message Order {
 	required string account = 6;
 	required int32 status = 7 [ default=0 ];
 	optional uint32 filledQty = 8 [default = 0];
-	optional uint32 cumulativeQty = 9 [default = 0];
+	optional string avg_fill_price = 9;
+	optional uint32 cumulativeQty = 10 [default = 0];
 	
 }

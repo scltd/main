@@ -172,6 +172,24 @@ public class BookBorg implements EventNotifierInterface, OrderEntryInterface {
 
   public void handleOrderFill(int orderId, double avgFillPrice, int fillQty) {
     log.trace("Handle OrderFill: {} price: {}, shares: {}", orderId, avgFillPrice, fillQty);
+    OrderWrapper ord = _ordersIdMap.get(orderId);
+    if (ord == null) {
+      log.error("Got a fill for order we don't know about.");
+    } else {
+
+      OrderEntryProto.Order reply =
+          OrderEntryProto.Order.newBuilder(ord.get_orderWire()).setStatus(0).setFilledQty(fillQty)
+              .setAvgFillPrice(String.valueOf(avgFillPrice)).build();
+      ord.get_context().writeAndFlush(reply);
+      if (Math.abs(ord.get_orderWire().getQty()) == fillQty) {
+        log.debug("Got a full fill for the order: {}", orderId);
+        _ordersIdMap.remove(orderId);
+        _ordersMap.remove(ord.get_contractId());
+      } else {
+        log.debug("Got a full partial-fill for the order: {}", orderId);
+        ord.set_orderWire(reply);
+      }
+    }
 
   }
 }
