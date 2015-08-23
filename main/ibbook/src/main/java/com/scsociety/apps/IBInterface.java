@@ -13,7 +13,14 @@ import com.ib.client.OrderState;
 import com.ib.client.UnderComp;
 
 public class IBInterface implements EWrapper {
+
 	final static Logger log = LoggerFactory.getLogger(IBInterface.class);
+
+	private EventNotifierInterface _eventNotifier;
+
+	public IBInterface(EventNotifierInterface ev) {
+		_eventNotifier = ev;
+	}
 
 	public void error(Exception e) {
 		log.error("Exception: {}", e.getMessage());
@@ -76,6 +83,10 @@ public class IBInterface implements EWrapper {
 		log.info(
 				"orderStatus: orderId: {}, status: {}, filled: {}, clientId:{}",
 				orderId, status, filled, clientId);
+		if (status.equals("PreSubmitted") || status.equals("Submitted")
+				|| status.equals("Cancelled")) {
+			_eventNotifier.handleOrderAck(orderId);
+		}
 	}
 
 	public void openOrder(int orderId, Contract contract, Order order,
@@ -101,7 +112,10 @@ public class IBInterface implements EWrapper {
 	public void updatePortfolio(Contract contract, int position,
 			double marketPrice, double marketValue, double averageCost,
 			double unrealizedPNL, double realizedPNL, String accountName) {
-		log.info("updatePortfolio");
+		log.info("updatePortfolio: {}, {}, {}, {}, {}, {}, {}, {}",
+				contract.m_conId, contract.m_localSymbol, position,
+				marketPrice, marketValue, averageCost, unrealizedPNL,
+				realizedPNL);
 
 	}
 
@@ -115,8 +129,8 @@ public class IBInterface implements EWrapper {
 	}
 
 	public void nextValidId(int orderId) {
-		log.info("nextValidId");
-
+		log.info("nextValidId: {}", orderId);
+		_eventNotifier.handleNextOrderId(orderId);
 	}
 
 	public void contractDetails(int reqId, ContractDetails contractDetails) {
@@ -140,7 +154,10 @@ public class IBInterface implements EWrapper {
 		}
 		log.trace("execDetails [{}],{} - {}@{} {}[{}]", reqId,
 				contract.m_localSymbol, execution.m_cumQty, execution.m_price,
-				execution.m_clientId, execution.m_execId);
+				execution.m_clientId, execution.m_shares);
+		_eventNotifier.handleOrderFill(execution.m_orderId,
+				execution.m_avgPrice, execution.m_shares);
+
 	}
 
 	public void execDetailsEnd(int reqId) {

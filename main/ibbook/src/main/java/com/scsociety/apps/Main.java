@@ -10,10 +10,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ib.client.AnyWrapper;
-import com.ib.client.EClientSocket;
-import com.scsociety.apps.network.BookServer;
-
 public class Main {
 	public static void main(String[] args) throws Exception {
 		int port;
@@ -22,7 +18,8 @@ public class Main {
 		} else {
 			port = 8080;
 		}
-		Logger log = LoggerFactory.getLogger(Test.class);
+		Logger log = LoggerFactory.getLogger(Main.class);
+
 		log.info("Hello World");
 		log.trace("TRACE TEST");
 		Properties p = new Properties();
@@ -39,8 +36,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		AnyWrapper z = new IBInterface(p);
-		EClientSocket e = new EClientSocket(z);
-		e.eConnect("localhost", 4001, 10);
+		BookBorg b = new BookBorg(p);
+		b.run();
 	}
 }

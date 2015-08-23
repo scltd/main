@@ -9,7 +9,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.scsociety.scjapi.RiskModel;
 import com.scsociety.scjapi.interfaces.AccountsImpl;
 import com.scsociety.scjapi.interfaces.ContractsImpl;
 import com.scsociety.scjapi.interfaces.IAccounts;

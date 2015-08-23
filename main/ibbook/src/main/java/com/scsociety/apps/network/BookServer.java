@@ -1,49 +1,39 @@
 package com.scsociety.apps.network;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+
+import java.util.Properties;
+
+import com.scsociety.apps.OrderEntryInterface;
 
 public class BookServer {
 	private int port;
+	private OrderEntryInterface _orderEntryIF;
 
-	public BookServer(int port) {
-		this.port = port;
+	public BookServer(Properties config, OrderEntryInterface ev) {
+		port = Integer.parseInt(config.get("ibbook.servicePort").toString());
+		_orderEntryIF = ev;
 	}
 
 	public void run() throws Exception {
-		EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
+		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		try {
-			ServerBootstrap b = new ServerBootstrap(); // (2)
+			ServerBootstrap b = new ServerBootstrap();
 			b.group(bossGroup, workerGroup)
-					.channel(NioServerSocketChannel.class) // (3)
-					.childHandler(new ChannelInitializer<SocketChannel>() { // (4)
-								@Override
-								public void initChannel(SocketChannel ch)
-										throws Exception {
-									ch.pipeline().addLast(new DiscardDecoder(),
-											new DiscardHandler());
-								}
-							}).option(ChannelOption.SO_BACKLOG, 128) // (5)
-					.childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
+					.channel(NioServerSocketChannel.class)
+					.handler(new LoggingHandler(LogLevel.INFO))
+					.childHandler(new BookServerInitializer(_orderEntryIF));
 
-			// Bind and start to accept incoming connections.
-			ChannelFuture f = b.bind(port).sync(); // (7)
-
-			// Wait until the server socket is closed.
-			// In this example, this does not happen, but you can do that to
-			// gracefully q
-			// shut down your server.
-			f.channel().closeFuture().sync();
+			b.bind(port).sync().channel().closeFuture().sync();
 		} finally {
-			workerGroup.shutdownGracefully();
 			bossGroup.shutdownGracefully();
+			workerGroup.shutdownGracefully();
 		}
 	}
 
