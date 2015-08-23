@@ -82,20 +82,29 @@ public final class OrderEntryProto {
         getAccountBytes();
 
     /**
-     * <code>optional uint32 filledQty = 7 [default = 0];</code>
+     * <code>required int32 status = 7 [default = 0];</code>
+     */
+    boolean hasStatus();
+    /**
+     * <code>required int32 status = 7 [default = 0];</code>
+     */
+    int getStatus();
+
+    /**
+     * <code>optional uint32 filledQty = 8 [default = 0];</code>
      */
     boolean hasFilledQty();
     /**
-     * <code>optional uint32 filledQty = 7 [default = 0];</code>
+     * <code>optional uint32 filledQty = 8 [default = 0];</code>
      */
     int getFilledQty();
 
     /**
-     * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+     * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
      */
     boolean hasCumulativeQty();
     /**
-     * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+     * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
      */
     int getCumulativeQty();
   }
@@ -198,11 +207,16 @@ public final class OrderEntryProto {
             }
             case 56: {
               bitField0_ |= 0x00000040;
-              filledQty_ = input.readUInt32();
+              status_ = input.readInt32();
               break;
             }
             case 64: {
               bitField0_ |= 0x00000080;
+              filledQty_ = input.readUInt32();
+              break;
+            }
+            case 72: {
+              bitField0_ |= 0x00000100;
               cumulativeQty_ = input.readUInt32();
               break;
             }
@@ -590,31 +604,46 @@ public final class OrderEntryProto {
       }
     }
 
-    public static final int FILLEDQTY_FIELD_NUMBER = 7;
-    private int filledQty_;
+    public static final int STATUS_FIELD_NUMBER = 7;
+    private int status_;
     /**
-     * <code>optional uint32 filledQty = 7 [default = 0];</code>
+     * <code>required int32 status = 7 [default = 0];</code>
      */
-    public boolean hasFilledQty() {
+    public boolean hasStatus() {
       return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
-     * <code>optional uint32 filledQty = 7 [default = 0];</code>
+     * <code>required int32 status = 7 [default = 0];</code>
+     */
+    public int getStatus() {
+      return status_;
+    }
+
+    public static final int FILLEDQTY_FIELD_NUMBER = 8;
+    private int filledQty_;
+    /**
+     * <code>optional uint32 filledQty = 8 [default = 0];</code>
+     */
+    public boolean hasFilledQty() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>optional uint32 filledQty = 8 [default = 0];</code>
      */
     public int getFilledQty() {
       return filledQty_;
     }
 
-    public static final int CUMULATIVEQTY_FIELD_NUMBER = 8;
+    public static final int CUMULATIVEQTY_FIELD_NUMBER = 9;
     private int cumulativeQty_;
     /**
-     * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+     * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
      */
     public boolean hasCumulativeQty() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
+      return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
-     * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+     * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
      */
     public int getCumulativeQty() {
       return cumulativeQty_;
@@ -627,6 +656,7 @@ public final class OrderEntryProto {
       qty_ = 0;
       price_ = "";
       account_ = "";
+      status_ = 0;
       filledQty_ = 0;
       cumulativeQty_ = 0;
     }
@@ -660,6 +690,10 @@ public final class OrderEntryProto {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!hasStatus()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -686,10 +720,13 @@ public final class OrderEntryProto {
         output.writeBytes(6, getAccountBytes());
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeUInt32(7, filledQty_);
+        output.writeInt32(7, status_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        output.writeUInt32(8, cumulativeQty_);
+        output.writeUInt32(8, filledQty_);
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        output.writeUInt32(9, cumulativeQty_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -726,11 +763,15 @@ public final class OrderEntryProto {
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(7, filledQty_);
+          .computeInt32Size(7, status_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(8, cumulativeQty_);
+          .computeUInt32Size(8, filledQty_);
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(9, cumulativeQty_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -861,10 +902,12 @@ public final class OrderEntryProto {
         bitField0_ = (bitField0_ & ~0x00000010);
         account_ = "";
         bitField0_ = (bitField0_ & ~0x00000020);
-        filledQty_ = 0;
+        status_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
-        cumulativeQty_ = 0;
+        filledQty_ = 0;
         bitField0_ = (bitField0_ & ~0x00000080);
+        cumulativeQty_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
 
@@ -920,9 +963,13 @@ public final class OrderEntryProto {
         if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
           to_bitField0_ |= 0x00000040;
         }
-        result.filledQty_ = filledQty_;
+        result.status_ = status_;
         if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
           to_bitField0_ |= 0x00000080;
+        }
+        result.filledQty_ = filledQty_;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+          to_bitField0_ |= 0x00000100;
         }
         result.cumulativeQty_ = cumulativeQty_;
         result.bitField0_ = to_bitField0_;
@@ -965,6 +1012,9 @@ public final class OrderEntryProto {
           account_ = other.account_;
           onChanged();
         }
+        if (other.hasStatus()) {
+          setStatus(other.getStatus());
+        }
         if (other.hasFilledQty()) {
           setFilledQty(other.getFilledQty());
         }
@@ -997,6 +1047,10 @@ public final class OrderEntryProto {
           return false;
         }
         if (!hasAccount()) {
+          
+          return false;
+        }
+        if (!hasStatus()) {
           
           return false;
         }
@@ -1352,33 +1406,65 @@ public final class OrderEntryProto {
         return this;
       }
 
-      private int filledQty_ ;
+      private int status_ ;
       /**
-       * <code>optional uint32 filledQty = 7 [default = 0];</code>
+       * <code>required int32 status = 7 [default = 0];</code>
        */
-      public boolean hasFilledQty() {
+      public boolean hasStatus() {
         return ((bitField0_ & 0x00000040) == 0x00000040);
       }
       /**
-       * <code>optional uint32 filledQty = 7 [default = 0];</code>
+       * <code>required int32 status = 7 [default = 0];</code>
+       */
+      public int getStatus() {
+        return status_;
+      }
+      /**
+       * <code>required int32 status = 7 [default = 0];</code>
+       */
+      public Builder setStatus(int value) {
+        bitField0_ |= 0x00000040;
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required int32 status = 7 [default = 0];</code>
+       */
+      public Builder clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        status_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int filledQty_ ;
+      /**
+       * <code>optional uint32 filledQty = 8 [default = 0];</code>
+       */
+      public boolean hasFilledQty() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>optional uint32 filledQty = 8 [default = 0];</code>
        */
       public int getFilledQty() {
         return filledQty_;
       }
       /**
-       * <code>optional uint32 filledQty = 7 [default = 0];</code>
+       * <code>optional uint32 filledQty = 8 [default = 0];</code>
        */
       public Builder setFilledQty(int value) {
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000080;
         filledQty_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional uint32 filledQty = 7 [default = 0];</code>
+       * <code>optional uint32 filledQty = 8 [default = 0];</code>
        */
       public Builder clearFilledQty() {
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000080);
         filledQty_ = 0;
         onChanged();
         return this;
@@ -1386,31 +1472,31 @@ public final class OrderEntryProto {
 
       private int cumulativeQty_ ;
       /**
-       * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+       * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
        */
       public boolean hasCumulativeQty() {
-        return ((bitField0_ & 0x00000080) == 0x00000080);
+        return ((bitField0_ & 0x00000100) == 0x00000100);
       }
       /**
-       * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+       * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
        */
       public int getCumulativeQty() {
         return cumulativeQty_;
       }
       /**
-       * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+       * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
        */
       public Builder setCumulativeQty(int value) {
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000100;
         cumulativeQty_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional uint32 cumulativeQty = 8 [default = 0];</code>
+       * <code>optional uint32 cumulativeQty = 9 [default = 0];</code>
        */
       public Builder clearCumulativeQty() {
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000100);
         cumulativeQty_ = 0;
         onChanged();
         return this;
@@ -1442,15 +1528,16 @@ public final class OrderEntryProto {
   static {
     java.lang.String[] descriptorData = {
       "\n\021order_entry.proto\022\024scsociety.trading.i" +
-      "o\"\250\002\n\005Order\022\020\n\010contract\030\001 \002(\t\022<\n\013timeInF" +
+      "o\"\273\002\n\005Order\022\020\n\010contract\030\001 \002(\t\022<\n\013timeInF" +
       "orce\030\002 \002(\0162\'.scsociety.trading.io.Order." +
       "TimeInForce\022.\n\004type\030\003 \002(\0162 .scsociety.tr" +
       "ading.io.Order.Type\022\013\n\003qty\030\004 \002(\005\022\r\n\005pric" +
-      "e\030\005 \002(\t\022\017\n\007account\030\006 \002(\t\022\024\n\tfilledQty\030\007 " +
-      "\001(\r:\0010\022\030\n\rcumulativeQty\030\010 \001(\r:\0010\"(\n\013Time" +
-      "InForce\022\007\n\003DAY\020\000\022\007\n\003GTC\020\001\022\007\n\003AUC\020\002\"\030\n\004Ty" +
-      "pe\022\007\n\003LMT\020\000\022\007\n\003STP\020\001B2\n\037com.scsociety.sc" +
-      "japi.io.networkB\017OrderEntryProto"
+      "e\030\005 \002(\t\022\017\n\007account\030\006 \002(\t\022\021\n\006status\030\007 \002(\005" +
+      ":\0010\022\024\n\tfilledQty\030\010 \001(\r:\0010\022\030\n\rcumulativeQ" +
+      "ty\030\t \001(\r:\0010\"(\n\013TimeInForce\022\007\n\003DAY\020\000\022\007\n\003G" +
+      "TC\020\001\022\007\n\003AUC\020\002\"\030\n\004Type\022\007\n\003LMT\020\000\022\007\n\003STP\020\001B" +
+      "2\n\037com.scsociety.scjapi.io.networkB\017Orde",
+      "rEntryProto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1469,7 +1556,7 @@ public final class OrderEntryProto {
     internal_static_scsociety_trading_io_Order_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_scsociety_trading_io_Order_descriptor,
-        new java.lang.String[] { "Contract", "TimeInForce", "Type", "Qty", "Price", "Account", "FilledQty", "CumulativeQty", });
+        new java.lang.String[] { "Contract", "TimeInForce", "Type", "Qty", "Price", "Account", "Status", "FilledQty", "CumulativeQty", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

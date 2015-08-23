@@ -21,7 +21,8 @@ message Order {
   required int32 qty = 4;
 	required string price = 5;
 	required string account = 6;
-	optional uint32 filledQty = 7 [default = 0];
-	optional uint32 cumulativeQty = 8 [default = 0];
+	required int32 status = 7 [ default=0 ];
+	optional uint32 filledQty = 8 [default = 0];
+	optional uint32 cumulativeQty = 9 [default = 0];
 	
 }

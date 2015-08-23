@@ -38,8 +38,7 @@ public class PostgreSQLBackend implements IBackend {
 			return false;
 		}
 		try {
-			System.out.println(configProps.toString());
-			String url = "jdbc:postgresql://sql.scsociety.com:5432/scltd";
+			String url = "jdbc:postgresql://sql.scsociety.com/scltd";
 			String user = "scs";
 			String password = "%0l1d%t4t3%0c13ty";
 
